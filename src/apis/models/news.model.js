@@ -49,7 +49,18 @@ const newSchema = mongoose.Schema(
 
 newSchema.plugin(toJSON)
 newSchema.plugin(paginate)
+newSchema.index({'$**': 'text'});
 
+/**
+ * Check if product is taken
+ * @param {string} codeTitle
+ * @param {ObjectId} [excludeNewId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+ newSchema.statics.isCodeTaken = async function (codeTitle, excludeNewId) {
+    const news = await this.findOne({ codeTitle, _id: { $ne: excludeNewId } })
+    return !!news
+}
 
 /**
  * @typedef New

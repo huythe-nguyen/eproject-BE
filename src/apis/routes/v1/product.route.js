@@ -8,8 +8,9 @@ const router = express.Router()
 
 router.post('/add', validate(productValidation.productSchema), productController.addProduct)
 router.get('/', productController.listProduct)
-router.get('/:id', productController.viewProduct)
-router.put('/:id', productController.exitProduct)
+router.get('/:key', productController.searchProduct)
+router.get('/edit/:id', productController.viewProduct)
+router.put('/edit/:id', productController.exitProduct)
 router.delete('/:id', productController.deleteProduct)
 
 module.exports = router

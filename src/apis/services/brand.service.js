@@ -10,7 +10,24 @@ const { Brand } = require('../models')
  * @returns {Promise<Brand>}
  */
 const createBrand = async (brandBody) => {
+    if (await Brand.isCodeTaken(brandBody.nameBrand)) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Brand already taken')
+    }
     return Brand.create(brandBody)
+}
+const view = async () => {
+    const list = await Brand.find({state:"Đang kinh doanh"});
+    if (list==0) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'No Brand')
+    }
+    return list
+}
+const search = async (key) => {
+    const list = await Brand.find({$text: {$search: key}});
+    if (list==0) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'No Brand')
+    }
+    return list
 }
 const updateBrand = async (id,productBody) => {
     const brand = await Brand.findById(id);
@@ -23,6 +40,8 @@ const updateBrand = async (id,productBody) => {
 
 module.exports = {
     createBrand,
-    updateBrand
+    updateBrand,
+    search,
+    view
 
 }

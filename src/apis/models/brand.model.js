@@ -39,8 +39,18 @@ const brandSchema = mongoose.Schema(
 
 brandSchema.plugin(toJSON)
 brandSchema.plugin(paginate)
+brandSchema.index({'$**': 'text'});
 
-
+/**
+ * Check if brand is taken
+ * @param {string} codeBrand
+ * @param {ObjectId} [excludeBrandId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+ brandSchema.statics.isCodeTaken = async function (codeBrand, excludeBrandId) {
+    const brand = await this.findOne({ codeBrand, _id: { $ne: excludeBrandId } })
+    return !!brand
+}
 /**
  * @typedef Brand
  */

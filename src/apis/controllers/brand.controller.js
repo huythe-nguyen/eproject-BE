@@ -11,18 +11,19 @@ const addBrand = catchAsync(async (req, res, next) => {
     });
 })
 const listBrand = catchAsync(async (req, res, next) => {
-    const brandList = await Brand.find()
-
-        if(brandList.length==0){
-            return res.status(500).json({
-                success: false,
-                message: 'No brands existed'
-            });
-        }
-        res.json({
-            success: true,
-            brands: brandList
-        });
+    const list = await brandService.view()
+    res.status(httpStatus.OK).json({
+        success: true,
+        brands: list
+    });
+})
+const search = catchAsync(async (req, res, next) => {
+    const key = new RegExp(req.params.key)
+    const list = await brandService.search(key)
+    res.status(httpStatus.OK).json({
+        success: true,
+        brands: list
+    });
 })
 const viewBrand = catchAsync(async (req, res, next) => {
     const brand = await Brand.findById(req.params.id)
@@ -72,5 +73,6 @@ module.exports = {
     listBrand,
     viewBrand,
     exitBrand,
-    deleteBrand
+    deleteBrand,
+    search
 }

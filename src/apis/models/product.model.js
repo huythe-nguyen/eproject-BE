@@ -53,6 +53,11 @@ const productSchema = mongoose.Schema(
             required: true,
             trim: true
         },
+        selling: {
+            type: String,
+            required: true,
+            trim: true
+        },
         colour: {
             type: String,
             required: true,
@@ -81,7 +86,18 @@ const productSchema = mongoose.Schema(
 
 productSchema.plugin(toJSON)
 productSchema.plugin(paginate)
+productSchema.index({'$**': 'text'});
 
+/**
+ * Check if product is taken
+ * @param {string} productCode
+ * @param {ObjectId} [excludeProductId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+ productSchema.statics.isCodeTaken = async function (productCode, excludeProductId) {
+    const product = await this.findOne({ productCode, _id: { $ne: excludeProductId } })
+    return !!product
+}
 
 /**
  * @typedef Product

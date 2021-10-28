@@ -12,18 +12,19 @@ const addProduct = catchAsync(async (req, res, next) => {
     });
 })
 const listProduct = catchAsync(async (req, res, next) => {
-    const productList = await Product.find()
-
-        if(productList.length==0){
-            return res.status(500).json({
-                success: false,
-                message: 'No employee existed'
-            });
-        }
-        res.json({
-            success: true,
-            products: productList
-        });
+    const productList = await productService.listProduct()
+    res.status(httpStatus.OK).json({
+        success: true,
+        product: productList
+    });
+})
+const searchProduct = catchAsync(async (req, res, next) => {
+    const key = new RegExp(req.params.key)
+    const productList = await productService.searchProduct(key)
+    res.status(httpStatus.OK).json({
+        success: true,
+        product: productList
+    });
 })
 const viewProduct = catchAsync(async (req, res, next) => {
     const product = await Product.findById(req.params.id)
@@ -47,30 +48,19 @@ const exitProduct = catchAsync(async (req, res, next) => {
         product: product
     });
 })
-const deleteProduct = catchAsync(async (req, res, next) => {
-    Product.findByIdAndRemove(req.params.id).then(product=>{
-        if(product){
-            return res.status(200).json({
-                success: true,
-                message: 'The product is deleted!'
-            });
-        }else{
-            return res.status(404).json({
-                success: false,
-                message: 'product not Found'
-            });
-        }
-    }).catch(error=>{
-        return res.status(500).json({
-            success: false,
-            error: error
-        });
-    })
+const deleteProduct = catchAsync(async (req, res) => {
+    const id = req.params.id
+    const product = await  productService.deleteProduct(id)
+    res.status(httpStatus.OK).json({
+        success: true,
+        message: 'Product is delete'
+    });
 })
 module.exports = {
     addProduct,
     listProduct,
     viewProduct,
     exitProduct,
-    deleteProduct
+    deleteProduct,
+    searchProduct
 }

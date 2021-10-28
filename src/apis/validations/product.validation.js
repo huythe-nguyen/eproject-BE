@@ -10,6 +10,7 @@ const productSchema = {
         size: Joi.number().required(),
         amount: Joi.number().required(),
         status: Joi.string().required(),
+        selling: Joi.string().required(),
         gender: Joi.string().required(),
         productImg1: Joi.string(),
         productImg2: Joi.string(),

@@ -11,18 +11,19 @@ const addNew = catchAsync(async (req, res) => {
     });
 })
 const listNew = catchAsync(async (req, res) => {
-    const newList = await New.find()
-
-        if(newList.length==0){
-            return res.status(500).json({
-                success: false,
-                message: 'No brands existed'
-            });
-        }
-        res.json({
-            success: true,
-            news: newList
-        });
+    const list = await newService.view()
+    res.status(httpStatus.OK).json({
+        success: true,
+        news: list
+    });
+})
+const search = catchAsync(async (req, res, next) => {
+    const key = new RegExp(req.params.key)
+    const List = await newService.search(key)
+    res.status(httpStatus.OK).json({
+        success: true,
+        news: List
+    });
 })
 const viewNew = catchAsync(async (req, res, next) => {
     const news = await New.findById(req.params.id)
@@ -38,6 +39,7 @@ const viewNew = catchAsync(async (req, res, next) => {
             news: news
         });
 })
+
 const exitNew = catchAsync(async (req, res) => {
     const id = req.params.id
     const news = await  newService.updateNew(id,req.body)
@@ -72,5 +74,6 @@ module.exports = {
     listNew,
     viewNew,
     exitNew,
-    deleteNew
+    deleteNew,
+    search
 }
